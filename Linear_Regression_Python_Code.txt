@@ -1,0 +1,175 @@
+***********************************************************************************************************************
+# LINEAR REGRESSION:
+***********************************************************************************************************************
+import numpy as np, pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LinearRegression
+from sklearn.metrics import r2_score
+
+import warnings
+warnings.filterwarnings('ignore')
+
+************************************************************************************************************************
+# Replaceing yes,no with 0 and 1 respectively:
+
+yes_no_col=['mainroad','guestroom','basement','hotwaterheating','airconditioning','prefarea']
+df[yes_no_col]=df[yes_no_col].replace({'yes':1,'no':0})
+df
+
+************************************************************************************************************************
+# Creating dummy variables for columns with more than two levels:
+
+df=pd.get_dummies(data=df,columns=['bedrooms','bathrooms','stories','parking','furnishingstatus'],drop_first=True)
+df
+
+************************************************************************************************************************
+# Plotting correlation plot using heatmap:
+
+plt.figure(figsize=[25,18])
+sns.heatmap(df.corr(),annot=True,cmap='YlGnBu')
+plt.show()
+************************************************************************************************************************
+# Splitting df into train and test set:
+
+df_train,df_test=train_test_split(df,train_size=0.7,random_state=100)
+df_train
+
+************************************************************************************************************************
+# Initialising MinMaxScaler:
+
+scaler=MinMaxScaler()
+
+# Fitting the scaler to train set and test set:
+
+var=['price','area']
+df_train[var]=scaler.fit_transform(df_train[var])
+df_test[var]=scaler.transform(df_test[var])
+df_train
+
+************************************************************************************************************************
+# Separating target variable and predictor variables:
+
+y_train=df_train.pop('price')
+X_train=df_train
+X_train
+
+y_test=df_test.pop('price')
+X_test=df_test
+X_test
+
+************************************************************************************************************************
+# MODEL BUILDING:
+
+# Initialising LR model using sklearn
+
+lr=LinearRegression()
+
+# Fitting LR model using sklearn   [Incase of only one predictor variable the X_train has to be in the format: X_train.reshape(-1,1)]
+
+lr=lr.fit(X_train,y_train)
+
+[In case of Simple Linear Regression: lr.intercept_ , lr.coef_ , r2_score(y,y_pred) ]
+
+# Reducing the columns to 12 using Recursive Feature Elimination:
+
+rfe=RFE(lr,15)
+rfe=rfe.fit(X_train,y_train)
+list(zip(X_train.columns,rfe.support_,rfe.ranking_))
+
+# Creating reduced set of predictor variables:
+
+X_train_rfe=X_train[X_train.columns[rfe.support_]]
+X_train_rfe
+
+# Fitting LR model using STATS-MODEL:
+
+lr=sm.OLS(y_train,sm.add_constant(X_train_rfe)).fit()
+lr.summary()
+
+# Checking the Variance Inflation Factor:
+
+vif=pd.DataFrame()
+vif['Columns']=X_train_rfe.columns
+vif['VIF']=[variance_inflation_factor(X_train_rfe.values,i) for i in range(X_train_rfe.shape[1])]
+vif=vif.sort_values(by='VIF',ascending=False)
+vif=vif.round(2)
+vif
+
+# Dropping 'bedrooms_6' and Rebuilding the LR model:
+
+X_train_rfe=X_train_rfe.drop('bedrooms_6',axis=1)
+lr=sm.OLS(y_train,sm.add_constant(X_train_rfe)).fit()
+lr.summary()
+
+************************************************************************************************************************
+
+# RESIDUAL ANALYSIS:
+
+# Getting predicted values for train data set:
+
+y_train_pred=lr.predict(sm.add_constant(X_train_rfe))
+y_train_pred
+
+# Residual:
+
+res=y_train-y_train_pred
+
+# Plotting distribution plot for residual:
+
+plt.figure(figsize=[7,5])	
+sns.distplot(res)
+plt.show()
+As we can see the curve looks like Normal distribution with mean 0. 
+Hence our model is inline with the assumption that the error is normally distributed with zero mean.
+
+# Checking for patterns in residual:
+
+plt.figure(figsize=[7,5])
+sns.regplot(y_train_pred,res)
+plt.show()
+Since we cannot see any patterns in error, our LR model is in line with the assumption that errors are independent of each other.
+
+Hence our model holds good for the following assumptions of simple linear regression:
+
+Linear relationship between X and Y
+Error terms are normally distributed
+Error terms are independent of each other
+Error terms have constant variance (homoscedasticity)
+
+*************************************************************************************************************************
+# MODEL EVALUATION:
+
+Now we validate our model using test df
+
+# Filtering the columns required for the model input:
+X_test=df_test[X_train_rfe.columns]
+X_test
+
+# Adding constant:
+X_test_sm=sm.add_constant(X_test)
+X_test_sm
+
+
+# Predicting the results for test set:
+y_test_pred=lr.predict(X_test_sm)
+y_test_pred
+
+# Comparing the Rsquare:
+print(r2_score(y_train,y_train_pred))
+print(r2_score(y_test,y_test_pred))
+
+# Plotting correlation using heatmap:
+plt.figure(figsize=[15,10])
+sns.heatmap(X_train_rfe.corr(),annot=True,cmap='YlGnBu')
+plt.show()
+
+***************************************************************************************************************************

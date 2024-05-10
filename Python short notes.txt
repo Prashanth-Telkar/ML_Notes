@@ -1,0 +1,4 @@
+Strings are Immutable.
+Lists are Mutable.
+Tuples are Immutable
+Sets are an unordered collection of unique elements.

@@ -1,0 +1,9 @@
+# INTERVIEW QUESTION:
+
+
+1) Difference b/w K-means and K-means++ clustering
+2) what is uni-variate, bi-variate, multi-variate analysis
+3) How to handle outlier and class imbalance in data set?
+4) How to derive beta coefficients of a multivariate regressor? [beta= (X'Y)(X'X)^-1]
+5) where you should not use K-means clustering.
+6) which is ur fav machine learing model.

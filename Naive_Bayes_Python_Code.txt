@@ -1,0 +1,116 @@
+***********************************************************************************************
+   Naive Bayes: Multinominal and Bernoulli Text Classifiers Model
+***********************************************************************************************
+import numpy as np, pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import sklearn
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
+from sklearn.naive_bayes import MultinomialNB,BernoulliNB
+from sklearn import metrics
+
+import warnings
+warnings.filterwarnings('ignore')
+
+**************************************************************
+pd.read_table #when the data is in txt file
+(here the first entry automatically gets assigned to column headdings)
+(Hence give: header=None,names=['Class','sms'])
+
+**************************************************************
+
+# Train_test split:
+df_train,df_test=train_test_split(df,train_size=0.7,random_state=1)
+df_train
+
+**************************************************************
+# Convert the dataframe to array:
+df_train=df_train.values
+df_test=df_test.values
+
+**************************************************************
+# Now split both train and test set into X_train,y_train,X_test...
+
+X_train=df_train[:,1]
+y_train=df_train[:,0].astype('int')
+X_test=df_test[:,1]
+y_test=df_test[:,0].astype('int')
+
+**************************************************************
+# Now we do CountVectorizer to create bag of unique words:
+# It gives us the unique columns/Feature names
+# stopwords=english will eleminate all the casual words
+
+cv=CountVectorizer(stop_words='english')	or 	cv=CountVectorizer(stop_words='english',min_df=0.03,max_df=0.8) #here min_df=0.03 means words ocuuring in only 3% of documents
+															      max_df=0.8 ,means words occuring in more than 80% documents
+X_train_transformed=cv.fit_transform(X_train,y_train)								    (we must igore both rare and mostly occuring words for better results)
+X_test_transformed=cv.transform(X_test)
+
+# we get the X_test_transformed in Compressed Sparse Row format:
+Ex: (0,5) 1 : 5th word of 1st sentence is present once
+
+**************************************************************
+# to array will display in sparse matrix form:
+
+X_train_transformed.toarray().shape
+
+**************************************************************
+# Displayes the unique features(words)
+
+cv.get_feature_names()
+
+**************************************************************
+# displayes unique words with its freq in train set:
+
+cv.vocabulary_
+
+**************************************************************
+## Model Building:
+# Multinominal Naive Bayes:
+
+mnb=MultinomialNB()
+mnb.fit(X_train_transformed,y_train)
+
+# Predicting probabalities using model:
+mnb.predict_proba(X_test_transformed)
+
+# Predicting Class using model:
+y_test_predicted=mnb.predict(X_test_transformed)
+
+**************************************************************
+## Model Evaluation:
+
+# Checking accuracy:
+accuracy_test=metrics.accuracy_score(y_test,y_test_predicted)
+
+# Confusion matrix for test set:
+conf_mat=metrics.confusion_matrix(y_test,y_test_predicted)
+
+# We can calculate sensitivity and specificity through conf_mat
+
+# Reciever Operating Characteristic Curve:
+
+def draw_roc(actual,pred):
+    fpr,tpr,threshold=metrics.roc_curve(actual,pred,drop_intermediate=False)
+    auc_score=metrics.roc_auc_score(actual,pred)
+    plt.plot(fpr,tpr,label='auc_score: %f' %auc_score)
+    plt.legend(loc='center right')
+    plt.title('ROC Curve')
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    
+draw_roc(y_test,y_test_predicted) 
+
+# Precision Score:
+metrics.precision_score(y_test,y_test_pred_bnb)
+
+# Recall Score = Sensitivity 
+metrics.recall_score(y_test,y_test_pred_bnb)
+
+***********************************************************************************************************************************************
+
+# Easy way to plot ROC curve:
+fpr,tpr,threshold=metrics.roc_curve(y_test,y_test_pred)
+sns.lineplot(fpr,tpr)

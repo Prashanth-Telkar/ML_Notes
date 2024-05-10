@@ -1,0 +1,215 @@
+**********************************************************************************************
+# LOGISTIC REGRESSION
+**********************************************************************************************
+import numpy as np, pandas as pd
+import matplotlib.pyplot as plt
+import seaborn as sns
+
+import statsmodels.api as sm
+from statsmodels.stats.outliers_influence import variance_inflation_factor
+
+import sklearn
+from sklearn import metrics
+from sklearn.preprocessing import MinMaxScaler
+from sklearn.preprocessing import StandardScaler
+from sklearn.model_selection import train_test_split
+from sklearn.feature_selection import RFE
+from sklearn.linear_model import LogisticRegression
+from sklearn.metrics import plot_confusion_matrix
+from sklearn.metrics import plot_roc_curve
+
+import warnings
+warnings.filterwarnings('ignore')
+
+*************************************************************************************************
+#Merging all the above data into a master dataframe:
+
+df0=pd.merge(cd,cu_d,how='inner',on='customerID')
+df=pd.merge(df0,int_d,how='inner',on='customerID')
+df
+
+**************************************************************************************************
+# Continuous variables:
+
+cont=df[['tenure','MonthlyCharges','TotalCharges']]
+cont
+
+# Categorical variables:
+
+cat=df.drop(cont,axis=1)
+cat=cat.drop('customerID',axis=1)
+cat
+
+***************************************************************************************************
+# Shortcut for separating categorical and continuous variables:
+
+df_num=pd.DataFrame(data=df.select_dtypes(include=['int64']))
+df_cat=pd.DataFrame(data=df.select_dtypes(include=['object']))
+***************************************************************************************************
+
+# Replacing Yes and No with 1 and 0 respectively:
+
+df=df.replace({'Yes':1,'No':0})
+df
+
+# Creating dummy variables:
+
+df=pd.get_dummies(data=df,columns=['Contract','PaymentMethod','MultipleLines','InternetService'],drop_first=True)
+df
+****************************************************************************************************
+# MODEL BUILDING
+
+# train-test split:
+df_train,df_test=train_test_split(df,train_size=0.7,random_state=100,stratify=y)   [stratify will equally distribute(percentage wise) the y and n of the target variable in each set]
+df_train
+
+scaler=StandardScaler()
+
+var=['tenure', 'MonthlyCharges', 'TotalCharges']
+df_train[var]=scaler.fit_transform(df_train[var])
+df_test[var]=scaler.transform(df_test[var])
+df_train
+
+y_train=df_train.pop('Churn')
+X_train=df_train
+y_test=df_test.pop('Churn')
+X_test=df_test
+
+*******************************************************************************************************
+# Fitting a Logistic Regression Model:
+
+# Model buliding using Stats-model
+
+lr=sm.GLM(y_train,sm.add_constant(X_train),family=sm.families.Binomial()).fit()
+lr.summary()
+
+# Building Model using sklearn for using RFE:
+
+lr=LogisticRegression()
+lr=lr.fit(X_train,y_train)
+rfe=RFE(lr,15)
+rfe=rfe.fit(X_train,y_train)
+list(zip(X_train.columns,rfe.support_,rfe.ranking_))
+
+X_train=X_train[X_train.columns[rfe.support_]]
+X_train
+
+lr=sm.GLM(y_train,sm.add_constant(X_train),family=sm.families.Binomial()).fit()
+lr.summary()
+
+# Variance Inflation Factor:
+
+vif=pd.DataFrame()
+vif['Columns']=X_train.columns
+vif['VIF']=[variance_inflation_factor(X_train.values,i) for i in range(X_train.shape[1])]
+vif=vif.round(2)
+vif=vif.sort_values(by='VIF',ascending=False)
+vif
+
+
+y_train_pred=lr.predict(sm.add_constant(X_train))
+y_train_pred
+
+# Creating table with y_train and y_train_pred_prob
+
+table=pd.DataFrame()
+table['customerID']=y_train_pred.index
+table['y_train']=y_train.values
+table['y_train_pred_prob']=y_train_pred.values
+table
+
+
+# Recievers Operating Characteristic curve:
+
+def draw_roc(actual,prob):
+    fpr,tpr,threshold = metrics.roc_curve(actual,prob,drop_intermediate=False)
+    auc_score=metrics.roc_auc_score(actual,prob)
+    plt.plot(fpr,tpr,label= 'auc_score =%f ' % auc_score)
+    plt.legend(loc="lower right")
+
+draw_roc(table.y_train,table.y_train_pred_prob)
+
+*************************************************************************************************
+# Easy way to plot ROC:
+
+plot_roc_curve(model,X_train,y_train)
+
+*************************************************************************************************
+
+# Now as we can see all the p values are significant but VIF for TotalCharges is 10.34, which is redundant. Hence we drop it.
+X_train=X_train.drop('TotalCharges',axis=1)
+
+# Fitting a Logistic Regression Model:
+lr=sm.GLM(y_train,sm.add_constant(X_train),family=sm.families.Binomial()).fit()
+lr.summary()
+
+Once the Model is finilised: Deciding the threshold cutoff value.
+
+conf_mat=metrics.confusion_matrix(table.y_train,table.y_train_pred)
+conf_mat
+
+accuracy=(conf_mat[0,0]+conf_mat[1,1])/sum(sum(conf_mat))
+print('accuracy= %f'%accuracy)
+
+sensitivity=conf_mat[1,1]/(conf_mat[1,0]+conf_mat[1,1])
+print('sensitivity= %f'%sensitivity)
+
+specificity=conf_mat[0,0]/(conf_mat[0,0]+conf_mat[0,1])
+print('specificity= %f'%specificity)
+
+% Adding column with y_pred for all threshold values ie.0.0,0.1,0.2,0.3...1.0:
+
+num = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+for y in num:
+    table[y]=table['y_train_pred_prob'].apply(lambda x:1 if x>y else 0)
+table
+
+# Creating table with columns=[threshold,accuracy,sensitivity,specificity]
+
+num = [0.0,0.1,0.2,0.3,0.4,0.5,0.6,0.7,0.8,0.9,1.0]
+metric_table=pd.DataFrame(columns=['Threshold','accuracy','sensitivity','specificity'])
+for x in num:
+    conf_mat=metrics.confusion_matrix(table.y_train,table[x])
+    accuracy=(conf_mat[0,0]+conf_mat[1,1])/sum(sum(conf_mat))
+    
+    sensitivity=conf_mat[1,1]/(conf_mat[1,0]+conf_mat[1,1])
+    
+    specificity=conf_mat[0,0]/(conf_mat[0,0]+conf_mat[0,1])
+
+    metric_table.loc[x]=[x,accuracy,sensitivity,specificity]
+metric_table
+
+# Plot to find optimal cutoff
+
+metric_table.plot.line(x='Threshold',y=['accuracy','sensitivity','specificity'])
+plt.grid()
+plt.show()
+
+**********************************************************************************************************
+# MODEL EVALUATION ON TEST DATA
+
+X_test=X_test[X_train.columns]
+X_test
+
+y_test_pred_prob=lr.predict(sm.add_constant(X_test))
+y_test_pred_prob
+
+# Using optimal cutoff
+y_test_pred=y_test_pred_prob.apply(lambda x:1 if x>0.3 else 0)
+y_test_pred
+
+conf_mat=metrics.confusion_matrix(y_test,y_test_pred)
+conf_mat
+
+# Checking acc,sen,spe for y_test, y_test_pred
+
+accuracy=(conf_mat[0,0]+conf_mat[1,1])/sum(sum(conf_mat))
+print('accuracy= %f'%accuracy)
+
+sensitivity=conf_mat[1,1]/(conf_mat[1,0]+conf_mat[1,1])
+print('sensitivity= %f'%sensitivity)
+
+specificity=conf_mat[0,0]/(conf_mat[0,0]+conf_mat[0,1])
+print('specificity= %f'%specificity)
+
+************************************************************************************************************

@@ -1,0 +1,144 @@
+Structure of this session
+This session is divided into two parts:
+Flower classification: First, we will see how to classify flowers them into “roses” and “daisies”. This is a toy dataset and its purpose is to introduce you to the key concepts and 
+methodologies. 
+In this session, you will learn:
+How to set-up an end-to-end pipeline for training deep learning models
+Preprocessing techniques: Morphological transformations etc.
+Data augmentation using data generators
+Building a network: Ablation experiments, hyperparameter tuning, storing the best model in disk etc.
+X-ray classification: We will apply the concepts learnt in the first half to Chest X-ray images. Here, you will learn how to identify and debug problems often encountered during training.
+
+skimage we use heavely for preprocessing (we can also use openCV for preprocessing [openCV is heavier and installation is difficult])
+import os [this will do all the path related activities]
+import glob [this will give us all the directories]  [ls with added cool features is glob]
+first step of data pre-processing is to make the images of the same size. 
+
+Morphological transformations: these are some of the image processing techniques (it can be a part of pre-processing or post-processing or it will fit in anywhere)
+- Applications of Morphological transformations:
+	Thresholding: a) Converting an RGB image to a greyscale
+		      b) Set threshold | internsity above is 1 , internsity below is 0 (ex: 125 ie midway between 0 to 255)
+- Some of the image processing techniques works only on binary images also image segmentation requires binary images.
+- some of these image processing techniques which requires binary images are Erosion, Dialation, Opening and Closing
+- Erosion and Dialationa are complement of each other and basically they are all concerned with the idea of removing the small bright places or small dark places.
+- Erosion and Dialation are the cases where we see lot of dark spaces and lot of white spaces. So opening and closing kind of moderates it like kind of regularisation since we dont
+  want to endup with lots of white spaces and dark spaces.
+- Morphological transformations are applied using the basic structuring element called 'disk'.  selem = selem.disk(3)
+
+- Data Preprocessing: Normalisation: Normalisation makes the training process much smoother.	
+- Reason for Normalization:
+	Contrast: some images are taken is poor lit condition where the intensities are not as high as 255
+	Gradient Propagation: If the images are not scaled between 0 to 1 or standard accross dataset then vl have lots of problem propagating our gradients back [IT IS VERY CRUTIAL STEP
+				SO WE ALWAYS ALWAYS ALWAYS NORMALIZE OUR IMAGES] weather we do it for RGB images or non RGB grey scale images, we should always bring our images to 0 to 1 scale
+norm1_image = image/255
+norm2_image = (image - np.min(image))/(np.max(image) - np.min(image))
+norm3_image = (image - np.percentile(image,5))/ (np.percentile(image,95) - np.percentile(image,5))
+
+- These are the diffents ways in which Normalization can be done.
+- for RGB images we can directly divide by 255 since the intensities lies bwt 0 to 255
+- we sometimes instead of taking max and min values we take 5th percentile and 95 per as we can have outlies and we dont want to take the max and min. Here we are not exactly normalizing 
+  bwt 0 and 1 but there are certain values which are slightly <0 and >1. This is also perfectly fine, it need not be strictly 0 to 1 it just need to be centered around 0
+- In medical images, XRays we will not have intensities lying between 0 to 255. so here we cannot divide just by 255 hence we go for other methods
+
+- Data augmentation: creating extra data out of existing data.
+- Many times, the quantity of data that we have is not sufficient to perform the task of classification well enough. In such cases, we perform data augmentation.
+- Reasons for Augmentation:
+	Small Training data
+	Tackling overfitting
+- Types of Augmentation:
+	1. Linear Transformation:
+		a) Matrix multiplication: here we just multiply by a matrix which will result in a rotated, zoomed, flipped image
+			i) Rotation (clockwise and anti-c)  ii) Flipping (horizontal flip and Vertical flip)  iii) Zoom (in and out) 
+			 flipping, rotation, cropping, translation, illumination, scaling, adding noise, shear etc.
+	2. Affine Transformation:
+		a) Translation followed by linear transformation
+			Translation means if i want to rotate the image about the center then i have to first translate the origin to the center.
+- As you know that pooling increases the invariance. If a picture of a dog is in the top left corner of an image, with pooling, you would be able to recognise if the dog is in little 
+  bit left/right/up/down around the top left corner. But with training data consisting of data augmentation like flipping, rotation, cropping, translation, illumination, scaling, 
+  adding noise etc., the model learns all these variations. This significantly boosts the accuracy of the model. So, even if the dog is there at any corner of the image, the model will 
+  be able to recognise it with high accuracy. 
+
+- To summarise, the resnet.py module contains all the building blocks of ResNets using which we can build all the variants such as ResNet-18, ResNet-34, ResNet-50, ResNet-101, ResNet-152 
+
+- Specifications of Resnet:
+- 1) Number of channels
+  2) Height
+  3) Weidth
+  4) Number of Classes 
+
+- Data Generator: The idea is that if we have a very long sequence that is taking up lot of memory, we dont want to load the entire sequence in memory in one go. what we really want to
+  		  do is just to keep an iterator and every time we just index the amount that we want to utilise and load only that perticular amount of memory.
+		  That is the fundemental idea of generator, Dont load the entier thing in memory, if we are looking at the first five things, just load the first five things in the 
+		  memory and in the next iteration load the next five things.
+		  We say that the batch size is 32 and we load only 32 images and tatz itand then process them and next load the next batch of 32 images and so on 
+
+- Ablation Experiments:
+- Before we train the full model, it is common to take a small chunk of the data and check whether your model is working on it. This is called an ablation experiment.
+- Ablation run refers to a process where you take a small subset of your data, and try to build your model on it. Broadly, an ablation study is where you systematically 
+  remove parts of the input to see which parts of the input are relevant to the networks output. 
+
+- To summarise, a good test of any model is to check whether it can overfit on the training data (i.e. the training loss consistently reduces along epochs). This technique is especially 
+  useful in deep learning because most deep learning models are trained on large datasets, and if they are unable to overfit a small version, then they are unlikely to learn from the 
+  larger version.
+
+- Reasons why Learnings may not happen:
+	1. Activation function not good enough 
+	2. Learning rate is not optimized 
+	3. SGD optimizer not used 
+	4. Initialization not done correctly
+	5. Problem with network architechture (This is the last option. If none of the above works only then change the architecture like ResNet-18,101,152,50...)
+- During training, sometimes you may get NaN as a loss instead of some finite number. This denotes that the output value predicted by the model is very high, which results in high 
+  loss value. This causes exploding gradient problem. The problem could be a high learning rate and to overcome, you can use SGD Optimiser. Although the adaptive methods 
+  (Adam, RMSProp etc.) have better training performance, they can generalise worse than SGD. Furthermore, you can also play with some of the initialisation techniques like 
+  Xavier initialisation, He initialisation etc. and change the architecture of the network if the problem does not get solved. 
+- ReLU is preferred because it does not suffer from the issue of gradient explosion. 
+- Exploding gradients happens when the output of the model is very high [which may be due to high Learning rate] which results in high loss
+- Exploding gradients are a problem when large error gradients accumulate and result in very large updates to neural network model weights during training. Gradients are used during 
+  training to update the network weights, but when the typically this process works best when these updates are small and controlled.
+
+- HyperParameter we can tune:
+	1. Learning Rate and the optimizers like (SGD, RMSprop, Adam)
+	2. Types of Augmentation
+- We have to see what perticuar combination of hyperparameters gives us the min validation loss
+- Decaying Learning Rate accross multiple epoches: We want to start with the high learning rate since we want to go down the gradient as quick as possible but when we come more
+  and more closer to the local minima in our later epoches we want to reduce our strides and make smaller strides hence we go on decreasing our learning rate as our epoches go on and on.
+- Heigher the learning rate, Steepest the decrease in loss.
+- All the hyperparameter tuning should be done on our ablation experements. (0.1,0.01,0.001...) 
+- However, you know that using such a high learning rate for the entire training process is not a good idea since the loss may start to oscillate around the minima later. So, at the 
+  start of the training, we use a high learning rate for the model to learn fast, but as we train further and proceed towards the minima, we decrease the learning rate gradually. 
+
+- Metric:
+- Accuracy is never ever a good idea to optimize coz in case of imbalance datasets we can achieve an accuracy of 99.99% and our model would still not work. Precision and recall sometimes 
+  works but the problem with precision and recall is here we want our final prediction to be a class ie. we need to select a threshold (Ex: everything above 0.5 is class 1 and ..) based on
+  which we calculate our precision and recall. ie. Our Precision and recall metrics are dependent on the threshold we set hence we may end up having skewed pre and recall values
+  based on our threshold.
+- So we want to use something which is not effected by imbalance classes and also which is not effected by the probability threshold and tatz why we end up using AUC. 
+- AUC is widely used in industry excpecially for binary classification. (AUC cannot be done for multiclass classification)
+- AUC is not biased by class imbalance and absolutely independent of our probability thresholds
+- Read Summary
+- We use Weighted cross entropy loss when we have class imbalance in the dataset
+- Weighted cross entropy loss is a concept where we say that while calculating losses if we are making error on the normal calsses I am not going to penalize as much but if you make error in
+  detecting the abnormal cases I am going to penalize you a lot. We do this just to make it consistent among both the normal and abnormal cases. 
+- Let's quickly recap the important concepts.
+	The model is not performing very well on AUC, the measure we had chosen. 
+	The main reason for this is the prevalence problem. There are just not as many abnormal cases available in the dataset. This problem will occur in almost all medical imaging 
+		problems (and for that matter, in most datasets that have a class imbalance).
+	To tackle this problem, we introduced 'weighted categorical cross-entropy'. This is a measure of loss, which applies weights to different forms of errors.
+
+- Weighted cross-entropy
+- A common solution to the low prevalence rate problem is using a weighted cross-entropy loss. The loss is modified such that misclassifications of the low-prevalence class are penalised 
+  more heavily than the other class.
+- Therefore, every time the model makes an error on the abnormal class (in this case, ‘effusion’), we penalise it heavily by multiplying the loss by a high value of weights. 
+  This results in an increase in loss for misclassified classes and therefore the change in weights due to backpropagation is more. So, the learning curve for the weights responsible 
+  for misclassification is more. 
+- We save the model weights only when there is an increase in 'validation accuracy'. The method to save the model weights is called checkpointing and it is called using keras callback.
+
+
+
+
+
+
+
+
+
+

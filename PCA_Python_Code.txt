@@ -1,0 +1,76 @@
+# PCA
+
+X_train.shape
+# We have 30 variables after creating our dummy variables for our categories
+
+#Improting the PCA module
+from sklearn.decomposition import PCA
+pca = PCA(svd_solver='randomized', random_state=42)
+
+#Doing the PCA on the train data
+pca.fit(X_train)
+
+# Displays all the principle compoents: (it creates 30 PC's)
+pca.components_
+
+# Varience explained by individual PC's arranged in decending order)
+pca.explained_variance_ratio_
+
+#Making the screeplot - plotting the cumulative variance against the number of components
+%matplotlib inline
+fig = plt.figure(figsize = (12,8))
+plt.plot(np.cumsum(pca.explained_variance_ratio_))
+plt.xlabel('number of components')
+plt.ylabel('cumulative explained variance')
+plt.show()
+
+***********************************************************************************************
+
+#Using incremental PCA for efficiency - saves a lot of time on larger datasets
+
+from sklearn.decomposition import IncrementalPCA
+pca_final = IncrementalPCA(n_components=16)
+
+[WE CAN ALSO USE DIRECT APPROACH BY GIVING PERCENTILE VARIANCE REQUIRED: pca_again = PCA(0.90) (refer page end)]
+***********************************************************************************************
+
+df_train_pca = pca_final.fit_transform(X_train)
+df_train_pca.shape
+
+# checking max and min corr value from corr matrix:
+
+corrmat_nodiag = corrmat - np.diagflat(corrmat.diagonal())
+print("max corr:",corrmat_nodiag.max(), ", min corr: ", corrmat_nodiag.min(),)
+# we see that correlations are indeed very close to 0
+
+#Applying selected components to the test data - 16 components
+
+df_test_pca = pca_final.transform(X_test)
+df_test_pca.shape
+
+# Applying a logistic regression on our Principal Components
+- We expect to get similar model performance with significantly lower features
+- If we can do so, we would have done effective dimensionality reduction without losing any import information
+
+*********************************************************************************************************************
+
+#Training the model on the train data
+
+from sklearn.linear_model import LogisticRegression
+from sklearn import metrics
+
+learner_pca = LogisticRegression()
+model_pca = learner_pca.fit(df_train_pca,y_train)
+
+
+**********************************************************************************************************************
+**********************************************************************************************************************
+Why not take it a step further and get a little more 'unsupervised' in our approach? This time, we'll let PCA select 
+the number of components basen on a variance cutoff we provide
+
+pca_again = PCA(0.90)
+df_train_pca2 = pca_again.fit_transform(X_train)
+df_train_pca2.shape
+# we see that PCA selected 14 components
+
+

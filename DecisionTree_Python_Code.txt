@@ -1,0 +1,71 @@
+## DECISION TREE AND RANDOM FOREST:
+
+import sklearn
+from sklearn.tree import DecisionTreeClassifier, plot_tree
+
+[In decision trees, we do not have to treat missing values, outliers and multicollinearity 
+before proceeding with model building.]
+
+# Initializing and fitting:
+
+dt=DecisionTreeClassifier(max_depth=3)
+dt.fit(X_train,y_train)
+
+# Plotting
+
+plt.figure(figsize=(60,30))
+plot_tree(dt, feature_names = X_train.columns,class_names=['No Disease', "Disease"],filled=True,rounded=True);
+
+*******************************************************************************************************************
+# RANDOM FOREST:
+
+import sklearn
+from sklearn.ensemble import RandomForestClassifier, RandomForestRegressor
+
+# Initializing and fitting:
+
+rf=RandomForestClassifier(random_state=97,n_jobs=-1,oob_score=True)     [n_jobs means if possible it will use multiple cores to process]
+rf.fit(X_train,y_train)
+
+rf.oob_score_
+
+# Plotting 	[we can use this to plot the decision tree in the random forest]
+
+plt.figure(figsize=(60,30))
+plot_tree(dt, feature_names = X_train.columns,class_names=['No Disease', "Disease"],filled=True,rounded=True);  
+rf=RandomForestClassifier
+
+********************************************************************************************************************
+# Hyperparameter tuning using GridSearchCV:
+
+rf=RandomForestRegressor(random_state=97,n_jobs=-1,oob_score=True)
+
+params={'n_estimators':[10,20,30,50,100],
+       'max_depth':[3,5,10,20,50],
+       'min_samples_leaf':[5,10,20,50,100],
+       'max_features':[10,20,30,40,50]}
+
+model_cv=GridSearchCV(estimator=rf,param_grid=params,cv=4,verbose=1,scoring='r2',return_train_score=True)
+model_cv.fit(X,y)
+
+best=model_cv.best_estimator_	[Gives best model out of all the combinations]
+best
+
+best.oob_score_		[This is the test/validating score]
+
+rf.score(X_train,y_train) #Gives r2_score
+
+from sklearn.metrics import classification_report
+print(classification_report(y_true,y_pred))		[Evaluates accuracy, f1 score, precision, recall... in case of classification problem]
+
+************************************************************************************************************************
+# Feature Importance using Random Forest:
+
+best.feature_importances_
+
+# Expressing Feature importance in Data Frame:
+pd.DataFrame({'features':X.columns,'Rank':best.feature_importances_})
+
+
+
+

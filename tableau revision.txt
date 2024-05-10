@@ -1,0 +1,66 @@
+TABLEAU https://www.youtube.com/watch?v=aHaOIvR00So&t=1490s
+- Tableau is a software company which produces interactive data visualization product focused on BI(business intelegence).
+- Visualization: it allows us visual acess to huge amount of data in easily digestible visuals. 
+- Tableau is very flexible since it has optimal number of data connectors for databases. For exmple we can connect to excel, text, json files, microsoft excel, oracle servers, sql servers.
+- Data connections- 1.Live connections 2.Inmemory connections.
+- Tableau Datatypes: 	1. Text(string) values- Welcome to tableau.
+			2. Date values- October 18, 2021
+			3. Date and time values- October 18, 2021 18:43:00 PM
+			4. Numerical values- decimal number(5.0000) , whole number(5)
+			5. Boolean values- True/False
+			6. Geographical values- India, New York	
+- Tableau auto detects all the DataType. (We dont need to specify)(we can also explicitly define if we want to).
+- Dimensions consists of text, geographic, date and number(Row id-since it is independent variable) data types.
+- A Dimention is a field that is independent variable. The dimention is usually text.
+- Measures consists of Numeric data types.
+- A Measures is a field that is dependent variable and its value is a function of one or more Dimentions. A Measure is usually a nuumber.
+- Once we connect to a data source in Tableau the columns get divided into dimensions and measures. 
+- A Dimension is a field that is independent variables.
+- A Measure is a field that is dependent variable and its value is a fuction of one or more dimesions.
+- Show me in the Tableau shows all the possible visualisations available for our data sources.
+- The visualisations that are highlighted are the once that are currently available for the current selection of dimensions and measures. (Remaning are not compateble for the current 
+  selection).
+- Types of graphs- 	Bar graph(horizontal, vertical bar graphs)- Used when dimention is Discontinuous.
+			Line graph- Continuous dimention.
+			Dual Axis graph-to represent two measures together.
+			Geographical grah-to plot measures on geographical maps.
+			Area graph with Dual Axis-to measure two different quantities across geographical locations.
+			Heat Map(Popular graph)-to visualise variations across categories using colour intensities.
+			Tree Map-to represent quantity and density in nested rectangles.
+- Column entries goes to X-axis, Row entries goes to Y-axis.
+- Functions in Tableau:
+- Join and Union functions are used to perform operations to combine data. Join - Combine Column(inner join and outer join like SQL), 
+									   Union - Combine Rows(Here the constraint is tat the attributes/columns should be the same)
+- Sort: Sort function can be used to sort categories and sub-categories based on their measure.
+- Set: Set is a type of filter where we can set a condition for displaying values, eg Discount>10%
+- Forcasting: Forcasting is used to predict the future trends based on the current values of graph.
+- Heighlighting: It is used to heighlight specific sub categories among all others. (among mutiples lines in a single graph one line is heilighted)
+- Device Designer: It is used to make best visualization for specific device. (Like it will change the visualization when using in tablet to fit it all necessary commands)
+
+- Steps in visual analysis: Acquire | Filter | Enhance(plot visualization) | Tune(tune the visualization to enhance the visualization power) | Deliver
+- Desiding which graph to be used is also one of the factor to bring accurate insights from the data.
+- Tableau Family: Tableau Desktop --Tableau Reader(This is free and just a reader. here we cannot edit the visualization. we can only apply filters)
+				  --Tableau Public (We can create visuals and also publish it)
+				  --Tableau Server (for corporates)
+ 				  --Tableau Online
+- Pros of Tableau: Easy to use (interactive and easy)
+		   Direct connect and go (it can connect to any data source. integrate multiple sources. also it can connect live)
+		   Perfect Mashups
+		   Best Practices in box (it has everthing required for make our visualization perfect)
+- Joins: Left Join | Right Join | Inner Join | Full Outer Join  
+- Left Join: evething from left table and only enteries of right table overlapping with left table will be included
+- Right Join: evething from Right table and only enteries of left table overlapping with Right table will be included
+- Inner Join: inclues only enteries which are comman in both tables
+- Full Outer Join: Includes everything
+- If there is no density parameter then we cannot use heatmap.
+- Filters: SQL costum filters, Context filters, traditional filters. (All these will help in enahancing the visualisation).
+- Hierarchy: it provides a way to start with a high level overview of your data and then drill down to lower levels of details on demand.  
+- Groups will also helps in organise and manage your fileds.
+- Sets : Sets are nothing but group of dimentions.
+- Sets are costume fields that define a subset of data based on some conditions.
+- Set can be based on computed condition.
+- for example, a set may contain costumers with sales over a certain threshold.
+- sets update as your data changes.
+- set can be based on specific data point in your view.
+- 
+- 

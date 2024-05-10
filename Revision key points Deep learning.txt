@@ -1,0 +1,735 @@
+DEEP LEARNING
+********************************************************************************************************************************************************************************
+Artificial Neural Networks:
+- Inspired by the structure of the human brain, neural networks have established a reputation for successfully learning complex tasks such as object recognition in images, 
+  automatic speech recognition (ASR), machine translation, image captioning, video classification etc.
+- In the last session, you will learn to implement neural networks using Keras (a high-level, user-friendly interface) with Tensorflow (the low-level workhorse library) as the backend.
+- As the name suggests, the design of Artificial Neural Networks (ANNs) is inspired by the human brain. Although not as powerful as the brain (yet), artificial neural networks are 
+  the most powerful learning models in the field of machine learning.
+- In the past few years, deep artificial neural networks have proven to perform surprisingly well on complex tasks such as speech recognition (converting speech to text), 
+  machine translation, image and video classification, etc. Such models are also commonly called deep learning models.
+- Artificial neural networks are said to be inspired by the structure of the brain. Let’s first understand the basic structure of the brain, the structure of a neuron and how 
+  information travels through neurons.
+- Simply speaking, the biological neuron works as follows - it receives signals through its dendrites which are either amplified or inhibited as they pass through the 
+  axons to the dendrites of other neurons.
+- To summarise, the main bottleneck in using neural networks is the availability of abundant training data. The professor also stressed the fact that neural networks have 
+  applications across various domains such as images and videos (computer vision), text, speech, etc. Note that the words deep learning and neural networks are often used interchangeably.
+- To summarise, Artificial Neural Networks, are a collection of a large number of simple devices called artificial neurons. The network ‘learns’ to conduct certain tasks, 
+  such as recognising a cat, by training the neurons to ‘fire’ in a certain way when given a particular input, such as a cat. In other words, the network learns to inhibit or 
+  amplify the input signals in order to perform a certain task, such as recognising a cat, speaking a word, identifying a tree etc.  
+- The perceptron was one of the earliest proposed models for learning simple classification tasks which later on became the fundamental building block of artificial neural networks.
+- To summarise, the perceptron takes a weighted sum of multiple inputs (along with a bias) as the cumulative input and applies a step function on the cumulative input, 
+  i.e. it returns 1 if the input is positive, else -1. In other words, the perceptron “fires” (returns 1) if the cumulative input is positive and "stays dormant" (returns 0) 
+  if the input is negative.
+- The input to a perceptron is the sum of weights multiplied with their respective inputs and the bias:
+	Cumulative Input = w1*x1+w2*x2+.........wk*xk+b = in matrix form W'*X+b
+- Upon applying the step function, if this cumulative sum of input is > 0, the output is 1/yes else 0/no.
+- You saw how the perceptron works as a classifier. The weights represent the importance of the corresponding feature for classification. You might have also noticed that 
+  the professor has used a sign function. The 'sign function' is similar to the step function - it outputs +1 when the input is greater than 0 and -1 otherwise. In a binary 
+  classification setting, +1 and -1 represent the two classes.
+- the weighted sum of inputs, w1*x1+w2*x2+.........wk*xk+b , when crosses a threshold (that is 0.7 here), you decide that you’ll go to the restaurant. else you wouldn't go.
+- So we see that a certain set (w,b)  is a valid separator if y*(W'*X+b)>0 for all the data points and not a valid separator if y*(W'*X+b)<0 for any one of the data points.
+- Before we move on, let us first tweak our representation a little to homogenous coordinates which will help us in formulating the perceptron solution more neatly, by including 1 at
+  the end of X vector and b at the end of W vector. (no need to write bias term seperately)
+- Training the perceptron:
+   W(t+1) <-- W(t)+ yi(t)*Xi(t), yi(t)*Xi(t) is the error term, It is important to note here that Xi(t) n this iterative procedure is a misclassified data point and 
+   yi(t) is the corresponding true label. Also, note that the dot in yi(t)*Xi(t) is not a dot product. 
+- Multiclass Classification using Perceptrons: 
+- network of perceptrons can act as a universal function approximator 
+- Consider randomly shuffled two coloured dots red and blue, now the model crates multiple polygons enclosing the red dots. Here each polygon is made combining multiple perceptrons where
+  each perceptron helps in binary classification. Finally if the aggregated result is +1 then it belongs to red class else blue. This is how simple perceptron is used to build extremely 
+  complex model.
+- Neural networks are a collection of artificial neurons arranged in a particular structure. 
+- So we see that a neuron is very similar to a perceptron, the only difference being that there is an activation function applied to the weighted sum of inputs. In perceptrons, 
+  the activation function is the step function, though, in artificial neural networks, it can be any non-linear function (you’ll study commonly used activation functions shortly).
+- Neurons in a neural network are arranged in layers. The first and the last layer are called the input and output layers. Input layers have as many neurons as the number of attributes 
+  in the data set and the output layer has as many neurons as the number of classes of the target variable (for a classification problem). For a regression problem, the number of neurons
+  in the output layer would be 1 (a numeric variable).
+- there are six main things that need to be specified for specifying a neural network completely:
+	Network Topology
+	Input Layer
+	Output Layer
+	Weights
+	Activation functions
+	Biases
+- The most important thing to notice is that the inputs can only be numeric. For different types of input data, we use different ways to convert the inputs to a numeric form.
+- In case of text data, we either use a one-hot vector or word embeddings corresponding to a certain word. For example, if the vocabulary size is |V|, then you can represent the word wn 
+  as a one-hot vector of size |V| with a '1' at the nth element while all other elements being zero. The problem with one-hot representation is that usually the vocabulary size |V| is huge,
+  in tens of thousands at least, and hence it is often better to use word embeddings which are a lower dimensional representation of each word.
+- Feeding images (or videos) is straightforward since images are naturally represented as arrays of numbers. These numbers are the raw pixels of the image. Pixel is short for picture
+  element. In images, pixels are arranged in rows and columns (an array of pixel elements). The figure below shows an image of a handwritten 'zero' in the MNIST dataset (black and white) 
+  and its corresponding representation in Numpy as an array of numbers. The pixel values are high where the intensity is high, i.e. the colour is white-ish, while they are low in the black
+  regions. 
+- In a neural network, each pixel of the input image is a feature. For example, the image above is an 18 x 18 array. Hence, it will be fed as a vector of size 324 to the network.
+- Note that the image above is a black and white image (also called greyscale image), and thus, each pixel has only one ‘channel’. If it were a colour image (called an RGB image - 
+  Red, Green, Blue), each pixel would have three channels - one each for red, blue and green as shown below. Hence, the number of neurons in the input layer would be 18 x 18 x 3 = 972. 
+- softmax output. A softmax output is a multiclass logistic function commonly used to compute the 'probability' of an input belonging to one of the multiple classes. It is defined as follows:
+   p(i)=[wi*x']/sum(1 to c)(wi*x')   c is the number of neurons in the output layer.
+- Although, it seems here that the x′ and all the wis here are scalars but that is not the case in a neural network. In the neural network, the input x′is a large vector and the wi
+  s are rows of a weight matrix which is present between the layers.
+- The sum of p0 +p1 +p2 +p3 = 1 p0,p1,p2,p3 belongs to(0,1)
+- softmax function translates to a sigmoid function in the special case of binary classification
+- There are various problems you face while trying to recognise handwritten text using an algorithm such as:
+	Noise in the image
+	The orientation of the text
+	Non-uniformity in the spacing of text
+	Non-uniformity in handwriting. 
+- The MNIST dataset takes care of some of these problems since the digits are written in a box. Now the only problem the network needs to take care of the non-uniformity in handwriting.  
+  Since the images in the MNIST dataset are 28 X 28 pixels, the input layer has 784 neurons (each neuron takes 1 pixel as input) and the output layer has 10 neurons each giving the 
+  probability of the input image belonging to any of the 10 classes.  The image is classified to the class represented by the neuron with the highest probability. 
+
+- Assumptions made to simplify Neural Networks:
+- Since large neural networks can potentially have extremely complex structures, certain assumptions are made to simplify the way information flows in them 
+- To summarise, commonly used neural network architectures make the following simplifying assumptions:
+	Neurons are arranged in layers and the layers are arranged sequentially.
+	Neurons within the same layer do not interact with each other.
+	All the inputs enter the network through the input layer and all the outputs go out of the network through the output layer.
+	Neurons in consecutive layers are densely connected, i.e. all neurons in layer l are connected to all neurons in layer l+1.
+	Every interconnection in the neural network has a weight associated with it, and every neuron has a bias associated with it.
+	All neurons in all layers use the same activation function.
+- Parameters and Hyperparameters of Neural Networks:
+- Recall that models such as linear regression, logistic regression, SVMs etc. are trained on their coefficients, i.e. the training task is to find the optimal values of the coefficients
+  to minimise some cost function. 
+- Neural networks are no different - they are trained on weights and biases.   
+- During training, the neural network learning algorithm fits various models to the training data and selects the best model for prediction. The learning algorithm is trained with a fixed
+  set of hyperparameters - the network structure (number of layers, number of neurons in the input, hidden and output layers etc.). It is trained on the weights and the biases, which are 
+  the parameters of the network
+- hyperparameters - the number of neurons in the input and the output layers, activation functions, the number of layers etc. 
+- parameters - weights and the biases
+- The notations that we shall be going forward are as follows:
+	W is for weight matrix
+	b shall stand for the bias
+	x stands for input
+	y is the ground truth label
+	p is the probability vector of the predicted output
+	h is the output of the hidden layers
+	superscript stands for layer number
+	subscript stands for the index of the individual neuron
+- p14 = We know that the input vector is x1. Hence, the corresponding output vector will be p1.Like we represented the input into the 4th neuron as x14, hence the element of p1 for the 4th neuron will be p14
+- [W^2]25 = The elements are of the matrix W^2 It is connecting to 2nd neuron in layer 2 from 5th neuron in the layer 1. Hence, [W^2]25
+- [b^3]2 = It is the bias of the 3rd layer for the 2nd neuron. Hence, [b^3]2
+- [h^2]5 = It is the output of the 2nd layer for the 5th neuron. Hence, [h^2]5
+
+- To summarise, the activation function could be any function, though it should have some important properties such as:
+	Activation functions should be smooth i.e. they should have no abrupt changes when plotted.
+	They should also make the inputs and outputs non-linear with respect to each other to some extent. This is because non-linearity helps in making neural networks more compact.   
+- The most popular activation functions used for neural networks are Logistic function - output = 1/[1+e^(-x)]
+- Hyperbolic tangent function
+- Rectilinear Unit / Relu function , output = x for x>0 or 0 otherwise.
+- Leaky Relu 
+- The output of a neuron is basically the activation function applied to the cumulative input to that neuron.
+- You can also show that in a sigmoid neuron, if you multiply the weights and biases by a positive constant c>0, as the limit as c→∞ the behaviour of this sigmoid neurons is exactly 
+  the same as that of a perceptron, given w⋅x+b≠0 for the input x.
+- Summar: you need to convert all types of data to a numeric format so that neural networks can process it.
+
+- feedforward:
+- The information flows in a neural network from the input layer to the output layer is often called feedforward. 
+- In artificial neural networks, the output from one layer is used as input to the next layer. Such networks are called feedforward neural networks. This means there are no loops in the
+  network - information is always fed forward, never fed back.
+- To summarize, the procedure to compute the output of the ith neuron in the layer l is:Multiply the ith  row of the weight matrix with the output of layer l-1 to get the weighted 
+  sum of inputs
+- Convert the weighted sum to cumulative sum by adding the ith bias term of the bias vector 
+- Apply the activation function, σ(x) to the cumulative input to get the output of the ith neuron in the layer l
+- For math behind input to output calculations ref - Feed forward in neural networks- comprehension count of pixels.
+- There are some important things to notice here. The last layer (the output layer) is different from the rest, and it is important how we define the output layer. Here, since we have a 
+  multiclass classification problem (the MNIST digits between 0-9), we have used the softmax output which we had defined in the previous session:
+- Batch Normalisation: Of course, training data has multiple data points, and we need to perform feedforward computation for all of them. 
+  A bad way to do that would be to write a 'for loop' iterating through all the data points. As the data scientist inside you would have guessed, there must be a more efficient way of doing it
+- feed forward for an entire batch of data points in one go using vectorized computation techniques.
+- B = batch of 50 data points , [5,50]- 50 data points with 5 pixels each
+- H,W,P = output , weight, probability matrix for a batch respectively
+ H = f(W*X +B)     f-activation function.
+- block matrix multiplication techniques
+- W*H is a matrix here, adding vector b to the matrix W*H refers to adding the vector each column of the matrix. In vectorized code, such as in Numpy, this addition is done through a 
+  process known as broadcasting.
+- Products of matrices and vectors can be easily parallelized: Neural network computations essentially boil down to matrix-vector products.
+- It is now easy to see how parallelised computation is possible (which is what modern GPUs specialise in doing). 
+- In this session, you learnt how the information flows from the input layer to the output layer in Artificial Neural Networks (feedforward). You studied feedforward using a simple image 
+  recognition problem as an example. You also learnt how to specify the dimensions and representations of the weight matrices, the biases, inputs and outputs of the layers, etc. of the 
+  various layers.
+- You also understood how feedforward can be done in a vectorized form and how it can be become efficient by using parallelization. ref pseudo code - feed forward in Neural networks.
+
+- Backpropagation:  
+- Process of training neural networks called backpropagation
+- Recall that the training task is to compute the optimal weights and biases by minimizing some cost function. In the upcoming lectures, you will study all the elements involved in 
+  training neural networks in detail - the loss function, backward flow of information, optimisation techniques etc.
+- The task of training neural networks is exactly the same as that of other ML models such as linear regression, SVMs etc. The desired output (output from the last layer) minus the actual
+  output is the cost (or the loss), and we have to tune the parameters w and b such that the total cost is minimized.  
+- An important point to note is that if the data is large (which is often the case), loss calculation itself can get pretty messy. For example, if you have a million data points, 
+  they will be fed into the network (in batch), the output will be calculated using feedforward and the loss/cost Li (for ithdata point) will be calculated. The total loss is the sum 
+  of losses of all the individual data points. Hence,
+- Total Loss = L1 + L2 +L3 +.......Ln
+- The total loss L is a function of w's and b's. Once the total loss is computed, the weights and biases are updated (in the direction of decreasing loss). 
+  In other words, L is minimized with respect to the w's and b's.
+- This can be done using any optimisation routine such as gradient descent. 
+- There is one important thing you should note here. We minimize the average of the total loss and not the total loss which you'll get to see shortly. Minimizing the average loss implies 
+  that the total loss is getting minimized.
+- training refers to the task of finding the optimal combination of weights and biases to minimise the total loss (with a fixed set of hyperparameters). In this segment, you will 
+  understand the anatomy and complexity of the cost function.
+- The optimisation is done using the familiar gradient descent algorithm. Recall that in gradient descent, the parameter being optimised is iterated in the direction of reducing cost 
+  according to the following rule:
+- Wnew = Wold - α[dL/dW]	α-Learning rate, 
+- The same can be written for the biases. Note that the weights and biases are often collectively represented by one matrix called W. Going forward, W will by default refer to the matrix 
+  of all the weights and biases.
+- The main challenge is that W is a huge matrix, and thus, the total loss L as a function of  W is a complex function. 
+- You learnt that the loss function for a very small and simple neural network can be very complex. The best way to minimise this complex loss function is by using gradient descent
+
+-Gradient Decent:
+- The slope of a hill whose height represents the total cost and each location on the hill represents a unique weight [w1, w2].
+- Let's take an example of a one-dimensional (univariate) function. Say you have a loss function L which depends only on one variable w: L(w)=w2. The minimum of this function is at w=0.
+- The algorithm starts with an initial arbitrary guess of w, computes the gradient at that point, and updates w according to the rule iteratively
+- The gradient has two critical pieces of information:
+	The sign of the gradient (positive here) is the 'direction' in which the function value increases, and thus, the negative of that sign is the direction of decrease. 
+	The value of the gradient (10 here) represents how steeply the function value increases or decreases at that point.
+- We control the step size through the learning rate α. 
+- Gradient descent can be easily extended to multivariate functions,
+- You can now extend this idea to any number of variables. Say one of the neural network layers has n biases. You can represent them in a large vector (b1,b2,b3,b4......bn)
+- The gradient vector will also be an n-dimensional vector, each element of which captures two pieces of information - the direction and rate of change of the function with respect to the 
+  parameter bi. 
+- Training a network essentially means to find the optimal set of weights and biases to minimise the total loss. The loss function is the difference between the actual output and the 
+  output predicted by the network (aggregated across all training data points).
+- Training a neural network basically implies finding correct values for weights and biases which minimises the loss function. The model starts with a random guess of the initial weights,
+  predict the output using feedforward and change the weights in the direction of reducing loss. This is the gradient descent algorithm.
+- We want to minimize the loss by changing the weights, i.e. move in the direction where d(loss)/d(W) decreases.
+- The slope of a hill whose height represents the total cost and each location on the hill represents a unique weight [w1, w2]: We can imagine a hill whose height represents the total 
+  cost and each location on it represents a unique weight [w1, w2]. Then we want to minimize the height (i.e. the cost), i.e. move in the direction of the slope of the hill to a point 
+  [w1, w2] where the cost / height is minimum.
+- The loss function L is defined in terms of the network output F(xi) and the ground truth yi. Since F(xi) depends on the weights and biases, the loss L, in turn, is a function of (w,b) .
+  The average loss across all data points is denoted by G(w,b) which we want to minimize. 
+- backpropagation algorithm:
+	Feedforward the ith data point
+	Compute the loss of the ith data point
+	Aggregate (compute the average of) m losses
+	Compute the gradient of loss with respect to weights and biases
+	Update the weights and biases
+ The data points are first fed forward, the loss of each data point is computed, then aggregated (to compute (average loss), then the gradient of loss is computed, and finally weights and 
+ biases are updated once.
+
+- Loss function: A commonly used loss function for classification problems is the cross-entropy loss.  C.E loss = -y'.log(p) = -(y1.log(p1)+y2.log(p2)+......)
+- You can notice that the cross-entropy loss is designed such that when the predicted probability is close to the ground truth, the loss value is close to zero, and vice-versa.
+- So the secret element zl represents the cumulative input into a neuron of layer l: zl = W(l).h(l-1)+b(l)
+- We are using the variable z mainly to simplify the gradient computation notations. 
+- the gradients are calculated in a backward direction starting from d(z^3).Hence, we'll calculate the gradients in the following sequence
+	d(z^3)
+	d(W^3)
+	d(h^2)
+	d(z^2)
+	d(W^2)
+	d(h^1)
+	d(z^1)
+	d(W^1)
+- This is why the process is known as backpropagation - we propagate the gradients in a backward direction starting from the output layer
+- The backpropagation strategy is to use the gradients of L with respect to the variables towards the right side of the network to compute the gradient with respect to the variables 
+  towards the left.
+- Thus, to compute the gradient with respect to W^2 we will use dh^2 and dz^2 as the intermediary variables.	
+- W63 is directly related to h^2, h^2 is directly related to z^2, z^2 is directly related to W^2: here this is how we calculate W^2.
+
+- Batch in Backpropagation:
+- To summarise, for updating weights and biases using plain backpropagation, you have to scan through the entire data set to make a single update to the weights. This is computationally
+  very expensive  for large datasets. Thus, you use multiple batches (or mini-batches) of data points, compute the average gradient for a batch, and update the weights based on that 
+  gradient.
+- But there is a danger in doing this - you are making weight updates based only on gradients computed for small batches, not the entire training set. Thus, you make multiple passes 
+  through the entire training set using epochs. An epoch is one pass through the entire training set, and you use multiple epochs (typically 10, 20, 50, 100 etc.) while training. 
+  In each epoch, you reshuffle all the data points, divide the reshuffled set into m batches, and update weights based on gradient of each batch. 
+- This training technique is called stochastic gradient descent, commonly abbreviated as SGD. 
+- In most libraries such as Tensorflow, the SGD training procedure is as follows:
+	You specify the number of epochs (typical values are 10, 20, 50, 100 etc.) - more epochs require more computational power 
+	You specify the number of batches m (typical values are 32, 64, 128, etc.)
+	At the start of each epoch, the data set is reshuffled and divided into m batches.
+	The average gradient of each batch is then used to make a weight update.
+	The training is complete at the end of all the epochs
+- Apart from being computationally faster, the SGD training process has another big advantage - it actually helps you reach the global minima (instead of being stuck at a local minima).
+- Thus, to avoid the problem of getting stuck at a local optimum, you need to strike a balance between exploration and exploitation.
+- Exploration means that you try to minimise the loss function with different starting points of W and b, i.e., you initialise W and b with different values. On the other hand, 
+  exploitation means that you try to reach the global minima starting from a particular W and b and do not explore the terrain at all. That might lead you to the lowest point locally, 
+  but not the necessarily the global minimum.
+
+- Summary:
+- you studied how backpropagation happens in neural networks and how the parameters are updated using the gradient descent algorithm.
+- You understood that the task is to minimize the loss function with respect to a large number of parameters and that it can be done efficiently using gradient descent. You studied the 
+  idea of training using a simple example of an OR gate. You then learnt to derive the expressions for the gradient of loss with respect to the variables Z,W,b,H of the various layers for 
+  a single data point. 
+- You also learnt the concept of minibatch gradient descent (also called stochastic gradient descent, SGD). You understood that it helps in reaching the global minimum faster (or at all) 
+  than using the vanilla gradient descent (done for an entire batch). You learnt that SGD conducts the training in multiple epochs where each epoch consists of multiple mini-batches of 
+  data points. 
+
+- Regularization:
+- Neural networks are usually large, complex models with tens of thousands of parameters, and thus have a tendency to overfit the training data. As with many other ML models, 
+  regularization is a common technique used in neural networks to address this problem. Let’s start with a quick recap of regularization. 
+- To summarise, one common regularization technique is to add a regularization term to the objective function. This term ensures that the model doesn’t capture the 'noise' in the dataset,
+  i.e. does not overfit the training data. This, in turn, leads to better generalizability of the model.
+- There are different kinds of regularization techniques, and the one discussed above can be represented in a general form as: Objective function = Loss function (Error term )+regularisatuion
+- Recall that the bias of a model represents the amount of error the model will commit on a given dataset, while the variance of the model measures how much the model changes when trained 
+  on a different dataset. Answer the following questions to revise these concepts.
+- This is something you would have studied earlier in regression also - recall that L1 and L2 regularisation (also called ridge and lasso regression) are commonly used to regularize 
+  regression models.
+- The objective function can be written as:
+  Objective function  = L(F(xi),θ) + λf(θ)where L(F(xi),θ) is the loss function expressed in terms of the model output F(xi) and the model parameters θ. The second term λf(θ) has two 
+  components -  the regularization parameter λ and the parameter norm f(θ).
+- There are broadly two types of regularization techniques followed in neural networks:
+
+1.       L1 norm: λf(θ) =||θ||1 is the sum of all the model parameters
+2.      L2 norm:  λf(θ)=  ||θ||2 is the sum of squares of all the model parameters
+
+- Note that you consider only the weights (and not the biases) in the norm since trying to regularize bias terms has empirically proven to be counterproductive for performance.
+- The 'parameter norm' regularisation that we have just discussed is similar to what you had studied in linear regression in almost every aspect. As in lasso regression (L1 norm), we get
+  a sparse weight matrix, which is not the case with the L2 norm. Despite this fact, the L2 norm is more common because the sum of the squares term is easily differentiable which comes in 
+  handy during backpropagation
+- part from using the parameter norm, there is another popular neural network regularization technique called dropouts. 
+
+- Dropouts:(helps in Regularization, dimentionality reduction, symetry breaking)
+- To summarise, the dropout operation is performed by multiplying the weight matrix Wl with an α mask vector as shown below.
+- Some important points to note regarding dropouts are:
+	Dropouts can be applied only to some layers of the network (in fact, that is a common practice - you choose some layer arbitrarily to apply dropouts to)
+	The mask α is generated independently for each layer during feedforward, and the same mask is used in backpropagation
+	The mask changes with each minibatch/iteration, are randomly generated in each iteration (sampled from a Bernoulli with some p(1)=q)
+- Why the dropout strategy works well is explained through the notion of a manifold. Manifold captures the observation that in high dimensional spaces, the data points often actually 
+  lie in a lower-dimensional manifold. This is observed experimentally and can be understood intuitively as well. 
+- Dropouts help in symmetry breaking as well. There is every possibility of the creation of communities within neurons which restricts them from learning independently. Hence, by setting 
+  some random set of the weights to zero in every iteration, this community/symmetry is broken. Note that a different mini batch is processed in every iteration in an epoch, and dropouts 
+  are applied to each mini batch.
+- Well again, you need not worry about how to implement dropouts since you just need to write one simple line of code to add dropout in Keras: model.add(dropout(0.2))
+- Please note that '0.2' here is the probability of zeros and not ones. This is also one of the hyperparameters. Also, note that you do not apply dropout to the output layer.
+- The mask used here is a matrix. Also, the dropout is applied only during training, not at test time. Having said that, there have been Bayesian interpretations which expect the dropout 
+  to be applied during test time.
+
+- Batch normalisation is usually done for all the layer outputs except the output layer.
+- There is one small problem: How to do batch normalisation during test time. Test data points are fedforward one at a time, and there are no 'batches' during test time. Thus, we do not 
+  have any μ and ^σ to normalise each test data point with. Thus, we take some sort of an average, i.e. the average of the μs and ^σs of the different batches of the training set. 
+- To get an intuition behind how batch normalisation solves the problem of decoupling the weight interactions and improve the training procedure, let's reiterate why normalisation of the
+  input data works at the first place. The answer is that the loss function contours change after normalisation, as shown in the figure below, and that it is easier to find the minimum of
+  the right contours compared to the contours on the left. 
+-  In keras, implementation of batchnormalisation is done as follows: model.add(BatchNormalization(axis=-1, epsilon=0.001, beta_initializer='zeros', gamma_initializer='ones'))
+
+- Introduction to Keras: please refer the entire page - modefications of neural networks - introduction to keras.
+- We saw the different types of regularization - L1 and L2 norm. L1 norm is not widely used as it is computationally intensive and hence dropouts are used. These behave the same way as
+  L1 norm and create a sparse weight matrix. You were given an intuitive explanation using the concept of manifold how not all the parameters are important for training. Remember that 
+  you do not apply dropout to the last output layer.
+- You were also introduced to Batchnormalisation and how it helps in training. You also saw how to perform batchnormalisation during test time. Also, note that batchnormalisation can be  
+  applied to either the cumulative input to the layer or the output of the layer. You then saw a simple demonstration of how Keras works as a wrapper and how to build a model in Keras on 
+  the MNIST dataset. You shall now build a neural network model using numpy on the MNIST dataset in the assignment.
+
+*********************************************************************************************************************************************************************************************
+
+Convolutional Neural Networks:
+
+- Convolutional Neural Networks, or CNNs, are neural networks specialised to work with visual data, i.e. images and videos (though not restricted to them). They are very similar to the 
+  vanilla neural networks (multilayer perceptrons) - every neuron in one layer is connected to every neuron in the next layer, they follow the same general principles of forward and 
+  backpropagation, etc. However, there are certain features of CNNs that make them perform extremely well on image processing tasks. 
+- By the end of this module, you will be able to understand the working principles of CNNs, compare various CNN architectures and be able to choose the right architecture for specific 
+  tasks. In transfer learning, you will learn to use large pre-trained networks for your own computer vision tasks. You will also be able to train CNNs using Python + Keras.
+- Convolutional Neural Networks, or CNNs, are specialised architectures which work particularly well with visual data, i.e. images and videos. They have been largely responsible for 
+  revolutionalizing 'deep learning' by setting new benchmarks for many image processing tasks that were very recently considered extremely hard. 
+- Challenges in image processing:
+	Viewpoint variation: Different orientations of the image with respect to the camera.
+	Scale variation: Different sizes of the object with respect to the image size.
+	Illumination conditions: Illumination effects.
+	Background clutter: Varying backgrounds
+- On the other hand, the architecture of CNNs uses many of the working principles of the animal visual system and thus they have been able to achieve extraordinary results in
+  image-related learning tasks. 
+- CNNs had first demonstrated their extraordinary performance in the ImageNet Large Scale Visual Recognition Challenge (ILSVRC).  The ILSVRC uses a list of about 1000 image categories or 
+ 'classes' and has about 1.2 million training images. The original challenge is an image classification task.
+- You can see the impressive results of CNNs in the ILSVRC where they now outperform humans (having 5% error rate). The error rate of the ResNet, a recent variant in the CNN family, 
+  is close to 3%. In the following image a bar graph is drawn depicting the error rate of different models, as discussed the ResNet has an error rate of 3.5% close to 3. 
+
+- Model		error		layers
+  AlexNet	16.4 		8
+  VGG		7.3		19
+  GoogleNet	6.7		22	
+  ResNet	3.57		152
+
+- applications of CNNs:
+	Object localization:Identifying the local region of the objects (as a rectangular area) and classifying them.
+	Semantic segmentation: Identifying the exact shapes of the objects (pixel by pixel) and classifying them.
+	Optical Character Recognition (OCR): Recognise characters in an image. For e.g. for the top-left image, the output will be ‘1680’.
+- There are various other applications of CNNs in the healthcare sector. Many medical imaging applications used in radiology, cardiology, gastroenterology etc. involve classification, 
+  detection, and segmentation of objects which can be analysed using CNNs.
+-
+- We had mentioned that the architecture of CNNs is motivated by the visual system of mammals. 
+- This was basically a bunch of experiments conducted to understand the visual system of a cat. In the experiments, spots of light (of various shapes and size) were made to fall on the 
+  retina of a cat and, using an appropriate mechanism, the response of the neurons in the cat's retina was recorded. This provided a way to observe which types of spots make some
+  particular neurons 'fire', how groups of neurons respond to spots of certain shapes, etc.
+- Some of the important observations made in the study were:
+	Each neuron in the retina focuses on one part of the image and that part of the image is called the receptive field of that neuron.
+	There are excitatory and inhibitory regions in the receptive field. The neurons only ‘fire’ when there is a contrast between the excitatory and the inhibitory regions. 
+	If we splash light over the excitatory and inhibitory regions together, because of no contrast between them, the neurons don’t ‘fire’ (respond). If we splash light just over 
+	the excitatory region, neurons respond because of the contrast.
+- The strength of the response is proportional to the summation over only the excitatory region (not inhibitory region). Later, you will study the pooling layer in CNNs which 
+  corresponds to this observation.
+- Each neuron in the retina is trained to 'look at': A particular patch (region) of the image
+- Neuron only ‘fires’ when there is a contrast between the excitatory region and the inhibiting region.
+- The excitatory and the inhibitory regions are: Regions in the receptive field which invoke a ‘response’ from the neurons trained to focus on that receptive field. All neurons 
+  do not respond to light falling on a receptive field, only the ones trained to focus on that receptive field do.
+- The receptive fields of all neurons are almost identical in shape and size
+- There is a hierarchy in the units: Units at the initial level do very basic tasks such as picking raw features (such as horizontal edges) in the image. The subsequent units extract 
+  more abstract features, such as identifying textures, detecting movement, etc. The layers 'higher' in the hierarchy typically aggregate the features in the lower ones.
+- The image below illustrates the hierarchy in units  - the first level extracts low-level features (such as vertical edges) from the image, while the second level calculates the 
+  statistical aggregate of the first layer to extract higher-level features (such as texture, colour schemes etc.).
+- Using this idea, if we design a complex network with multiple layers to do image classification (for example), the layers in the network should do something like this:
+	The first layer extracts raw features, like vertical and horizontal edges
+	The second layer extracts more abstract features such as textures (using the features extracted by the first layer)
+	The subsequent layers may identify certain parts of the image such as skin, hair, nose, mouth etc. based on the textures.
+	Layers further up may identify faces, limbs etc. 
+	Finally, the last layer may classify the image as 'human', 'cat' etc.
+- Apart from explaining the visual system, the paper also suggested that similar phenomena have been observed in the auditory system and touch and pressure in the somatosensory system. 
+  This suggests that CNN-like architectures can be used for speech processing and analysing signals coming from touch sensors or pressure sensors as well. 
+- We have already discussed most of the key ideas of the CNN architecture through this paper. Summarising the main points below:
+	Each unit, or neuron, is dedicated to its own receptive field. Thus, every unit is meant to ignore everything other than what is found in its own receptive field.
+	The receptive field of each neuron is almost identical in shape and size.
+	The subsequent layers compute the statistical aggregate of the previous layers of units. This is analogous to the 'pooling layer' in a typical CNN.
+	Inference or the perception of the image happens at various levels of abstraction. The first layer pulls out raw features, subsequent layers pull out higher-level features based 
+        on the previous features and so on. Finally, the network gets an overall perception of an image in the last layer.
+- Let's dig a little deeper into CNN architectures now. In this segment, we will analyse the architecture of a popular CNN called VGGNet. Observing the VGGNet architecture will give you 
+  a high-level overview of the common types of CNN layers before you study each one of them in detail.
+- To summarise, there are three main concepts you will study in CNNs:
+	Convolution, and why it 'shrinks' the size of the input image
+	Pooling layers
+	Feature maps
+- The VGGNet was specially designed for the ImageNet challenge which is a classification task with 1000 categories. Thus, the softmax layer at the end has 1000 categories. The blue 
+  layers are the convolutional layers while the yellow ones are pooling layers. You will study each one of them shortly.
+- Finally, the green layer is a fully connected layer with 4096 neurons, the output from which is a vector of size 4096.
+- The most important point to notice is that the network acts as a feature extractor for images. For example, the CNN above extracts a 4096-dimensional feature vector representing each 
+  input image. In this case, the feature vector is fed to a softmax layer for classification, but you can use the feature vector to do other tasks as well (such as video analysis, object 
+  detection, image segmentation etc.).
+- Next, you will see how one can do video analysis using the feature vector extracted by the network.
+- Convolution operation acts as a feature extractor.
+- You already know that the input to any neural network should be numeric. Fortunately, images are naturally represented as arrays (or matrices) of numbers.
+- To summarize:
+	Images are made up of pixels.
+	A number between 0-255 represents the colour intensity of each pixel.
+	Each pixel in a colour image is an array representing the intensities of red, blue and green. The red, blue and green layers are called channels.
+- In a grayscale image (a 'black and white' image), only one number is required to represent the intensity of white. Thus, grayscale images have only one channel.  
+- For grascale image- The height and width of this image are 18 pixels, so it is stored as an 18 x 18 array
+- Each pixel's value lies between 0-255
+- The pixels having a value close to 255 appear white (since the pixels represent the intensity of white), and those close to 0 appear black
+- for a colour image-The height and width of the image are 4 pixels.
+- Here, three numbers make each pixel (representing RGB). So, there are 3 channels here.
+- The size of the matrix is thus 4 x 4 x 3
+- Note that all colours can be made by mixing red, blue and green at different degrees of 'saturation' (0-100% intensity). For example, a pure red pixel has 100% intensity of red, and 0% 
+  intensity of blue and green. So, it is represented as (255,0,0). White is the combination of 100% intensity of red, green and blue. So, it is represented as (255,255,255).
+- Why is the Range of Pixel Values 0-255?
+   Usually, 8-bits (1 byte) are used to represent each pixel value. Since each bit can be either 0 or 1, 8-bits of information allows for 2^8=256 possible values. 
+  Therefore, the range of each pixel is 0-255.
+- If it is a grayscale image, number of channels is 1: White-255, Black-0
+- If it is a colour image, and if we represent by RGB (Red, Green, Blue), the number of channels is 3, Numbers of pixels is 'width x height', which is 250 x 150, independent of depth. 
+- If we represent an image in HSV (Hue, Saturation, Value) format, the number of channels is 3.
+- What is the range of possible values of each channel of a pixel if we represent each pixel by 8 bits? = 0-255
+- What do the numbers signify in the pixel? = Intensity of a colour, Each number in pixel represents intensity. If it's '0', it means black with no intensity and '255' means white with
+  the highest intensity. 
+-
+- Video Analysis:
+- A video is basically a sequence of frames where each frame is an image. You already know that CNNs can be used to extract features from an image. 
+- Let's summarise the process of video analysis using a CNN + RNN (Recurrent Neural Network) stack. At this point, you only need to understand that RNNs are good at processing sequential 
+  information such as videos (a sequence of images), text (a sequence of words or sentences), etc. You will study RNN in the next module. 
+- For a video classification task, here's what we can do. Suppose the videos are of length 1 minute each. If we extract frames from each video at the rate of 2 frames per second (FPS), 
+  we will have 120 frames (or images) per video. Push each of these images into a convolutional net (such as VGGNet) and extract a feature vector (of size 4096, say) for each image. Thus,
+  we have 120 feature vectors representing each video. 
+- These 120 feature vectors, representing a video as a sequence of images, can now be fed sequentially into an RNN which classifies the videos into one of the categories.
+- The main point here is that a CNN acts as a feature extractor for images, and thus, can be used in a variety of ways to process images.
+- In the next few segments, you will study the main elements of CNNs in detail - convolutions, pooling, feature maps etc.
+- RNN: Recurrent Neural Networks are designed to process sequential information, such as videos (sequence of images), text (sequence of words or sentences), etc. 
+
+- Convolution:
+- Mathematically, the convolution operation is the summation of the element-wise product of two matrices. Let’s take two matrices, X and Y. If you 'convolve the image X using the 
+  filter Y', this operation will produce the matrix Z. 
+- Finally, you compute the sum of all the elements in Z to get a scalar number, i.e. 3+4+0+6+0+0+0+45+2 = 60. 
+
+- Feature detection: 
+- In the convolution output using the first filter, only the middle two columns are nonzero while the two extreme columns (1 and 4) are zero. This is an example of vertical edge detection.  
+- Note that each column of the 4 x 4 output matrix looks at exactly three columns of the input image. The values in the four columns represent the amount of change (or gradient) in the 
+  intensity of the corresponding columns in the input image along the horizontal direction.
+- For example the output is 0 (20 - 20 or 10 - 10) in the columns 1 and 4, denoting that there is no change in intensity in the first three and the last three columns of the input image 
+  respectively.
+- On the other hand, the output is 30 (20 - (-10)) in the columns 2 and 3, indicating that there is a gradient in the intensity of the corresponding columns of the input image.
+- the Sobel filter which can detect both horizontal and vertical edges in complex images. 
+- We have discussed some simple examples of filters and convolutions, and you may have some questions such as 'can filters have arbitrary sizes', 'can any filter convolve any image', 
+  etc. In the next segment, we will be able to answer these questions using the concepts of stride and padding.
+- Any matrix that takes the difference between the left and the right pixel can find the edge. 
+- A diagonal edge will have pixel values such that there is a gradient in the direction perpendicular to the 45-degree line, i.e. a gradient in pixel values from top-left to 
+  bottom-right. The filter should also have a gradient in this direction.
+- while doing convolutions, each time we computed the element-wise product of the filter with the image, we had moved the filter by exactly one pixel (both horizontally and vertically). 
+  But that is not the only way to do convolutions - you can move the filter by an arbitrary number of pixels. This is the concept of stride. 
+- You saw that there is nothing sacrosanct about the stride length 1. If you think that you do not need many fine-grained features for your task, you can use a higher stride length
+  (2 or more).
+- You also saw that you cannot convolve all images with just any combination of filter and stride length. For example, you cannot convolve a (4, 4) image with a (3, 3) filter using a 
+  stride of 2. Similarly, you cannot convolve a (5, 5) image with a (2, 2) filter and a stride of 2 (try and convince yourself). 
+- To solve this problem, you use the concept of padding.
+- Padding
+- The following are the two most common ways to do padding:
+	Populating the dummy row/columns with the pixel values at the edges
+	Populating the dummy row/columns with zeros (zero-padding)
+- An alternate (less commonly used) way to do convolution is to shrink the filter size as you hit the edges. 
+- You may have noticed that when you convolve an image without padding (using any filter size), the output size is smaller than the image (i.e. the output 'shrinks'). For example. 
+  when you convolve a (6, 6) image with a (3, 3) filter and stride of 1, you get an output of (4, 4). 
+- If you want to maintain the same size, you can use padding.
+- You saw that doing convolutions without padding reduces the output size. It is important to note that only the width and height decrease (not the depth) when you convolve without 
+  padding.  The depth of the output depends on the number of filters used -  we will discuss this in a later segment.
+- Why Padding is Necessary?
+- You saw that doing convolutions without padding will 'shrink' the output. For example, convolving a (6, 6) image with a (3, 3) filter and stride of 1 gives a (4, 4) output. Further, 
+  convolving the (4, 4) output with a (3, 3) filter will give a (2, 2) output. The size has reduced from (6, 6) to (2, 2) in just two convolutions. Large CNNs have tens (or even hundreds) 
+  of such convolutional layers (recall VGGNet), so we will be incurring massive 'information loss' as we build deeper networks!
+- This is one of the main reasons padding is important - it helps maintain the size of the output arrays and avoid information loss. Of course, in many layers, you actually want to shrink
+  the output (as shown below), but in many others, you maintain the size of the output.
+- the output size = ([[n+2p-k]/s]+1 , [[n+2p-k]/s]+1) ,n=input image size, p=padding, k=kernal/filter, s=stride.
+- So far, we have been doing convolutions only on 2D arrays (images), say of size 6x6. But most real images are coloured (RGB) images and are 3D arrays of size m x n x 3. 
+  Generally, we represent an image as a 3D matrix of size height x width x channels.
+- To convolve such images, we simply use 3D filters. The basic idea of convolution is still the same - we take the element-wise product and sum up the values. The only difference is that 
+  now the filters will be 3-dimensional, For example: 3 x 3 x 3, or 5 x 5 x 3 (the last '3' represents the fact that the filter has as many channels as the image). 
+- To summarise, you learnt the following:
+	We use 3D filters to perform convolution on 3D images. For example: if we have an image of size (224, 224, 3), we can use filters of sizes (3, 3, 3), (5, 5, 3), (7, 7, 3) etc. 
+        (with appropriate padding etc.). We can use a filter of any size as long as the number of channels in the filter is the same as that in the input image.
+	The filters are learnt during training (i.e. during backpropagation). Hence, the individual values of the filters are often called the weights of a CNN.
+- In the discussion so far, we have talked about only weights, but convolutional layers (i.e. filters) also have biases. 
+- Suppose we have an RGB image and a (2, 2, 3) filter as shown below. The filter has three channels, and each channel of the filter convolves the corresponding channel of the image. 
+  Thus, each step in the convolution involves the element-wise multiplication of 12 pairs of numbers and adding the resultant products to get a single scalar output.
+- You can express the convolution operation as a dot product between the weights and the input image. If you treat the (2, 2, 3) filter as a vector w of length 12, and the 12 corresponding 
+  elements of the input image as the vector p (i.e. both unrolled to a 1D vector), each step of the convolution is simply the dot product of wT and p. The dot product is computed at every 
+  patch to get a (3, 3) output array, as shown above.
+- Apart from the weights, each filter can also have a bias. In this case, the output of the convolutional operation is a (3, 3) array (or a vector of length 9). So, the bias will be a 
+  vector of length 9. However, a common practice in CNNs is that all the individual elements in the bias vector have the same value (called tied biases). For example, a tied bias for the 
+  filter shown above can be represented as:
+- The other way is to use untied biases where all the elements in the bias vector are different, but that is much less common than using tied biases.
+
+- FEATURE MAPS:
+- A neuron is basically a filter whose weights are learnt during training. For example, a (3, 3, 3) filter (or neuron) has 27 weights. Each neuron looks at a particular region in 
+  the input (i.e. its 'receptive field').
+- A feature map is a collection of multiple neurons each of which looks at different regions of the input with the same weights. All neurons in a feature map extract the same feature 
+  (but from different regions of the input). It is called a 'feature map' because it is a mapping of where a certain feature is found in the image. 
+- The two neurons produce two feature maps. You can have multiple such neurons convolve an image, each having a different set of weights, and each produces a feature map.
+- Comprehension - Feature Maps
+- Consider the VGGNet architecture shown below. The first convolutional layer takes the input image of size (224, 224, 3), uses a (3, 3, 3) filter (with some padding), and produces 
+  an output of (224, 224). This (224, 224) output is then fed to a ReLU to generate a (224, 224) feature map. Note that the term 'feature map' refers to the (non-linear) output of 
+  the activation function, not what goes into the activation function (i.e. the output of the convolution).
+- Similarly, multiple other (224, 224) feature maps are generated using different (3, 3, 3) filters. In the case of VGGNet, 64 feature maps of size (224, 224) are generated, which 
+  are denoted in the figure below as the tensor 224 x 224 x 64. Each of the 64 feature maps try to identify certain features (such as edges, textures etc.) in the (224, 224, 3) input 
+  image.
+- The (224, 224, 64) tensor is the output of the first convolutional layer.  In other words, the first convolutional layer consists of 64 (3, 3, 3) filters, and hence contains 
+  64 x 27 trainable weights (assuming there are no biases).
+- The 64 feature maps, or the (224, 224, 64) tensor, is then fed to a pooling layer.
+- What is the total number of trainable weights in a kernel/filter of size 3x3x3? Assume there are no biases.- There are 27 weights in a (3, 3, 3) filter, which are all 
+  learnt during training.
+- What is the total number of trainable parameters in a kernel/filter of size 3x3x3? Assume that there is a single tied bias associated with the filter.
+- 28: There are 27 weights and one bias in the (3, 3, 3) filter
+- Given an image of size 3x3 and a kernel of size 3x3, what will be the total number of multiplication and addition operations in convolution? Assume there is no padding and 
+  there are no biases (only weights). If there are m multiplication and n addition operations, the answer will be m+n.
+- 17: There will be 3x3 multiplication operations and (3x3-1) addition operations (you need n-1 addition operations to add n numbers.
+
+- POOLING:
+- After extracting features (as feature maps), CNNs typically aggregate these features using the pooling layer. Let's see how the pooling layer works and how it is useful in 
+  extracting higher-level features.
+- Pooling tries to figure out whether a particular region in the image has the feature we are interested in or not. It essentially looks at larger regions 
+  (having multiple patches) of the image and captures an aggregate statistic (max, average etc.) of each region. In other words, it makes the network invariant to local transformations.
+- The two most popular aggregate functions used in pooling are 'max' and 'average'. The intuition behind these are as follows:
+- Max pooling: If any one of the patches says something strongly about the presence of a certain feature, then the pooling layer counts that feature as 'detected'.
+- Average pooling: If one patch says something very firmly but the other ones disagree,  the pooling layer takes the average to find out.
+- Extending this pooling operation to multiple feature maps: pooling operates on each feature map independently. It reduces the size (width and height) of each feature map, 
+  but the number of feature maps remains constant. 
+- Pooling has the advantage of making the representation more compact by reducing the spatial size (height and width) of the feature maps, thereby reducing the number of parameters 
+  to be learnt. On the other hand, it also loses a lot of information, which is often considered a potential disadvantage. Having said that, pooling has empirically proven to 
+  improve the performance of most deep CNNs.
+- How many trainable parameters are there in the pooling layer? Ans: 0
+
+-Putting the Components Together:
+- To summarise, a typical CNN layer (or unit) involves the following two components in sequence:
+- We start with an original image and do convolutions using multiple filters to get multiple feature maps.
+- A pooling layer takes the statistical aggregate of the feature maps
+- Typically, deep CNNs have multiple such CNN units (i.e. feature map-pooling pairs) arranged sequentially. 
+- To summarise, a typical CNN has the following sequence of CNN layers:
+- We have an input image which is convolved using multiple filters to create multiple feature maps
+- Each feature map, of size (c, c), is pooled to generate a (c/2, c/2) output (for a standard 2 x 2 pooling). 
+- The above pattern is called a CNN layer or unit. Multiple such CNN layers are stacked on top of one another to create deep CNN networks.
+- Note that pooling reduces only the height and the width of a feature map, not the depth (i.e. the number of channels). For example, if you have m feature maps each of 
+  size (c, c), the pooling operation will produce m outputs each of size (c/2, c/2).
+- What is the main reason we prefer a lower dimensional output of an image from the network?
+- We want a compact representation of the image as the output, one which preferably captures only the useful features in the image
+- The reason we want a compact representation of the image is to get rid of all the redundancies in the image. For e.g. all the 224 x 224 x 3 pixels may not be required
+  to do a classification or object detection task, just a smaller vector (say of length 5000) may be enough.
+
+- SUMMARY:
+- learnt the basics of convolutional neural networks and their common applications in computer vision such as image classification, object detection, etc. You also learnt that CNNs 
+  are not limited to images but can be extended to videos, text, audio etc. 
+- The design of CNNs uses many observations from the animal visual system, such as each retinal neuron looks at its own (identical) receptive field, some neurons respond proportionally
+  to the summation over excitatory regions (pooling), the images are perceived in a hierarchical manner, etc.  
+- You learned that images are naturally represented in the form of arrays of numbers. Greyscale images have a single channel while colour images have three channels (Red Green Blue). 
+  The number of channels or the 'depth' of the image can vary depending on how we represent the image. Each channel of a pixel, usually between 0-255, indicates the 'intensity' of a 
+  certain colour.
+- You saw that specialised filters, or kernels can be designed to extract specific features from an image (such as vertical edges). A filter convolves an image and extracts features 
+  from each 'patch'. Multiple filters are used to extract different features from the image. Convolutions can be done using various strides and paddings.
+- The filters are learned during training (backpropagation). Each filter (consisting of weights and biases) is called a neuron. Multiple neurons are used to convolve an image 
+  (or feature maps from the previous layers) to generate new feature maps.  The feature maps contain the output of convolution + non-linear activation operations on the input. 
+- A typical CNN unit (or layer) in a large CNN-based network comprises multiple filters (or neurons), followed by non-linear activations, and then a pooling layer. The pooling layer 
+  computes a statistical aggregate (max, sum etc.) over various regions of the input and reduces sensitivity to minor, local variations in the image.  Multiple such CNN units are stacked 
+  together, finally followed by some fully connected layers, to form deep convolutional networks.
+- The pooling layer does not contain any trainable parameters, Convolution and fully connected layers do. We learn the value of those parameters during backpropagation. Since pooling is 
+  just taking aggregate, there are no parameters involved in it. Say, we want to take an average of 4 numbers, we will just do (1/4) ( 4 numbers). There are no parameters that need to be 
+  learned.  Fully connected layer obviously has weights, we already know that from multilayer perceptron. 
+- Padding helps to preserve the information at the edges, otherwise, the convolution operation would extract information only from the central regions of the image.
+- Pooling reduces the width and height, thereby reducing the number of parameters and the amount of computation (since with less number of parameters there will be fewer computations 
+  involved in feedforward/backpropagation etc.). 
+- Since pooling takes a statistical aggregate over multiple regions of an image, it makes the network invariant to 'local transformations' (such as the face being tilted a little, 
+  or an object being located in a different region than what the training data had seen).
+- Pooling reduces the number of parameters and computation, it also controls overfitting (It genralizes the model by making it invarient to local transformations hence control overfitting)
+- Flatten: The 'Flatten' layer connects the convolutional layer to the fully connected layer by flattening the multidimensional tensor output from the conv layer to a long vector.
+- The results of the experiments done so far are summarised below. Note that 'use BN' refers to using BN after the convolutional layers, not after the FC layers.
+- 	Experiment - I (Use dropouts after conv and FC layers, no BN): 
+	Training accuracy =  84%, validation accuracy  =  79%
+	Experiment - II (Remove dropouts from conv layers, retain dropouts in FC, use BN): 
+	Training accuracy =  98%, validation accuracy  =  79%
+	Experiment - III (Use dropouts after conv and FC layers, use BN):
+	Training accuracy =  89%, validation accuracy  =  82%
+	Experiment - IV (Remove dropouts from conv layers, use L2 + dropouts in FC, use BN):
+	Training accuracy = 94%, validation accuracy = 76%. 
+- The ideal configuration (from the ones tried so far) is to use dropouts after both conv and FC layers with BN 
+- Removing dropouts after the conv layers affects the performance adversely(the model overfits)
+- Using BN(BATCH NORMALIZATION) (keeping other things constant) improves the performance significantly
+	Experiment-V: Dropouts after conv layer, L2 in FC, use BN after convolutional layer
+- SOME MORE EXPERIMENTS:
+	Train accuracy =  86%, validation accuracy = 83%
+	Experiment-VI: Add a new convolutional layer to the network
+	Train accuracy =  89%, validation accuracy = 84%
+- The additional convolutional layer boosted the validation accuracy marginally, but due to increased depth, the training time increased.
+	Experiment-VII: Add more feature maps to the convolutional layers to the network
+	Train accuracy =  92%, validation accuracy = 84%
+- On adding more feature maps, the model tends to overfit (compared to adding a new convolutional layer). This shows that the task requires learning to extract more (new) abstract features, 
+  rather than trying to extract more of the same features.
+- SUMMARY:
+- Based on these experiments, we saw that the performance of CNNs depends heavily on multiple hyperparameters - the number of layers, number of feature maps in each layer, the use of 
+  dropouts, batch normalisation, etc. Thus, it is advisable to first fine-tune your model hyperparameters by conducting lots of experiments. Only when you are convinced that you have 
+  found the right set of hyperparameters you should train the model with a larger number of epochs (since almost always the amount of time and computing power you have is limited).
+
+- CNN Architectures and Transfer Learning:
+- The depth of the state-of-the-art neural networks has been steadily increasing (from AlexNet with 8 layers to ResNet with 152 layers).
+- The developments in neural net architectures were made possible by significant advancements in infrastructure. For example, many of these networks were trained on multi GPUs in a 
+  distributed manner.
+- Since these networks have been trained on millions of images, they are good at extracting generic features from a large variety of images. Thus, they are now commonly being used as 
+  commodities by deep learning practitioners around the world.
+- we will briefly look into the architectures of AlexNet and VGGNet
+- The AlexNet was one of the very first architectures to achieve extraordinary results in the ImageNet competition (with about a 17% error rate). It had used 8 layers (5 convolutional 
+  and 3 fully connected). One distinct feature of AlexNet was that it had used various kernels of large sizes such as (11, 11), (5, 5), etc. Also, AlexNet was the first to use dropouts, 
+  which were quite recent back then.
+- You are already familiar with VGGNet from the previous session. Recollect that the VGGNet has used all filters of the same size (3, 3) and had more layers (The VGG-16 had 16 layers 
+  with trainable weights, VGG-19 had 19 layers etc.). 
+- The VGGNet had succeeded AlexNet in the ImageNet challenge by reducing the error rate from about 17% to less than 8%.
+- The key idea in moving from AlexNet to VGGNet was to increase the depth of the network by using smaller filters. 
+- In the first convolution, the (5, 5) filter produces a feature map with a single element (note that the convolution is followed by a non-linear function as well). This filter has 
+  25 parameters.
+- In the second case with the (3, 3) filter, two successive convolutions (with stride=1, no padding) produce a feature map with one element.
+- We say that the stack of two (3, 3) filters has the same effective receptive field as that of one (5, 5) filter.  This is because both these convolutions produce the same output 
+  (of size 1 x1 here) whose receptive field is the same 5 x 5 image.
+- Notice that with a smaller (3, 3) filter, we can make a deeper network with more non-linearities and fewer parameters. In the above case:
+- The (5, 5) filter has 25 parameters and one non-linearity
+- The (3, 3) filter has 18 (9+9) parameters and two non-linearities.
+- Since VGGNet had used smaller filters (all of 3 x 3) compared to AlexNet (which had used 11 x 11 and 5 x 5 filters), it was able to use a higher number of non-linear activations 
+  with a reduced number of parameters.
+- GoogleNet:
+- After VGGNet, the next big innovation was the GoogleNet which had won the ILSVRC’14 challenge with an error rate of about 6.7%.
+- Unlike the previous innovations, which had tried to increase the model capacity by adding more layers, reducing the filter size etc. (such as from AlexNet to VGGNet), GoogleNet 
+  had increased the depth using a new type of convolution technique using the Inception module.
+- To summarise, some important features of the GoogleNet architecture are as follows:
+	Inception modules stacked on top of each other, total 22 layers
+	Use of 1 x 1 convolutions in the modules
+	Parallel convolutions by multiple filters (1x1, 3x3, 5x5)
+	Pooling operation of size (3x3)
+	No FC layer, except for the last softmax layer for classification
+	Number of parameters reduced from 60 million (AlexNet) to 4 million
+- Residual Net:
+- The ResNet team came up with a novel architecture with skip connections which enabled them to train networks as deep as 152 layers.
+- Thus, the skip connection mechanism was the key feature of the ResNet which enabled the training of very deep networks.
+- From Alexnet to VGGnet to Google_net the depth is increasing and the trainable parameters is decresing coz of smaller kernal size used.
+- Introduction to Transfer Learning:
+- So far, we have discussed multiple CNN based networks which were trained on millions of images of various classes. The ImageNet dataset itself has about 1.2 million images of 
+  1000 classes.
+- However, what these models have 'learnt' is not confined to the ImageNet dataset (or a classification problem). In an earlier session, we had discussed that CNNs are basically 
+  feature-extractors, i.e. the convolutional layers learn a representation of an image, which can then be used for any task such as classification, object detection, etc.
+- Thus, transfer learning is the practice of reusing the skills learnt from solving one problem to learn to solve a new, related problem.
+- Transfer Learning With Pre-Trained CNNs:
+- For most computer vision problems, you are usually better off using a pre-trained model such as AlexNet, VGGNet, GoogleNet, ResNet etc.
+- Thus, the initial layers of a network extract the basic features, the latter layers extract more abstract features, while the last few layers are simply discriminating between images.
+- In other words, the initial few layers are able to extract generic representations of an image and thus can be used for any general image-based task.
+- Thus, transfer learning is not just limited to image classification but can be extended to a wide variety of tasks. 
+- Practical Implementation of Transfer Learning:
+- There are two main ways of using pre-trained nets for transfer learning:
+	Freeze the (weights of) initial few layers and training only a few latter layers
+	Retrain the entire network (all the weights) initialising from the learned weights
+- Thus, you have the following two ways of training a pre-trained network:
+- ‘Freeze’ the initial layers, i.e. use the same weights and biases that the network has learnt from some other task, remove the few last layers of the pre-trained model, add your own 
+  new layer(s) at the end and train only the newly added layer(s).
+- Retrain all the weights starting (initialising) from the weights and biases that the net has already learnt. Since you don't want to unlearn a large fraction of what the pre-trained 
+  layers have learnt. So, for the initial layers, we will choose a low learning rate.
+- When you implement transfer learning practically, you will need to take some decisions such as how many layers of the pre-trained network to throw away and train yourself.
+- To summarise:
+	If the task is a lot similar to that of the pre-trained model had learnt from, you can use most of the layers except the last few layers which you can retrain 
+	If you think there is less similarity in the tasks, you can use only a few initial trained weights for your task.
+	(we use many layers if our task is to classify animal images and very few layers if our task is to classify chest Xrays)
+- FLOWER DETECTION USING CNN:
+- Images come in different shapes and sizes. They also come through different sources. For example, some images are what we call “natural images”, which means they are taken in colour, 
+  in the real world. For example:
+	A picture of a flower is a natural image.
+	An X-ray image is not a natural image. 
+- Natural images also have a specific statistical meaning
+- RGB is the most popular encoding format, and most "natural images" we encounter are in RGB.
+- Also, among the first step of data pre-processing is to make the images of the same size. 
+- Morphological transformations:
+- The term morphological transformation refers to any modification involving the shape and form of the images. These are very often used in image analysis tasks. Although they are used 
+  with all types of images, they are especially powerful for images that are not natural (come from a source other than a picture of the real world).
+- Image sizes define input sizes of neural networks
+- Erosion, Dilation, Opening & Closing
+- Erosion shrinks bright regions and enlarges dark regions. Dilation on the other hand is exact opposite side - it shrinks dark regions and enlarges the bright regions.
+- Opening is erosion followed by dilation. Opening can remove small bright spots (i.e. “salt”) and connect small dark cracks. This tends to “open” up (dark) gaps between (bright) features.
+- Opening: Easy way to remember this - opening is used to "open up" the light, hence the last step will be to enlarge the bright parts (the word "dilation" refers to enlarging)
+- Closing is dilation followed by erosion. Closing can remove small dark spots (i.e. “pepper”) and connect small bright cracks. This tends to “close” up (dark) gaps between (bright) features.
+- All these can be done using the skimage.morphology module. The basic idea is to have a circular disk of a certain size (3 below) move around the image and apply these transformations 
+  using it.
+- Different sizes of structuring element
+  Morphological transformations are applied using the basic structuring element called 'disk'.  A disk is defined with the code: selem = selem.disk(3)
+- Thresholding: One of the simpler operations where we take all the pixels whose intensities are above a certain threshold, and convert them to ones; the pixels having value less than 
+  the threshold are converted to zero. This results in a binary image.
+
+- Normalisation of images:
+- Why do we normalise?
+- Normalisation makes the training process much smoother. This is an important preprocessing step, so let's discuss it briefly.
+- For example, let's say you have some data points x1,x2,x3,...,xn. The range of values of most data points is between (say) -10 to 10, but a few data points (say x11 and x18) 
+  have values ranging from -900 to 1000.
+- Now, in backpropagation, the gradients are (directly or indirectly) related to the derivatives f′(x) where f is the activation function. Say you are using a sigmoid activation. 
+  In sigmoid, the value of f′(x) at x=-800 and x=900 is almost zero, but it is a small positive number between x=-1 and +1. 
+- This makes the gradient with respect to  x11and x18 drop to almost zero, and so the weight updates cannot happen in the right direction. Although sigmoid is rarely used in 
+  modern deep learning architectures, this problem arises in other activation functions as well and can be reduced using normalisation.
+- Outliers:
+- In the case, you have outliers in data and if you normalise by the equation   (x−xmin)/(xmax−xmin), then your "normal" data will scale to a very small range, something 
+  like 0 to 0.1, which you do not want. The data should be distributed between 0 to 1. Therefore, it is suitable to normalise using the percentile
+- Reasons for Normalisation:
+- Contrast and lighting conditions: We need to account for variation in pictures, or different settings of machines taking images
+- Gradient Propagation: Normalised images make for much better gradient propagation  
+
+- Augmentation:
+- Insufficient data: This brings us to the next aspect of data pre-processing - data augmentation. Many times, the quantity of data that we have is not sufficient to perform the 
+  task of classification well enough. In such cases, we perform data augmentation.
+- As an example, if we are working with a dataset of classifying gemstones into their different types, we may not have enough number of images (since high-quality images are 
+  difficult to obtain). In this case, we can perform augmentation to increase the size of your dataset.
+- As you know that pooling increases the invariance. If a picture of a dog is in the top left corner of an image, with pooling, you would be able to recognise if the dog is in 
+  little bit left/right/up/down around the top left corner. But with training data consisting of data augmentation like flipping, rotation, cropping, translation, illumination, 
+  scaling, adding noise etc., the model learns all these variations. This significantly boosts the accuracy of the model. So, even if the dog is there at any corner of the image, 
+  the model will be able to recognise it with high accuracy. 
+- More the training data, model is more effective. 
+- Even if the data is of lower quality, data augmentation can boost the effectiveness of the model. 
+- Data augmentation reduced overfitting
+- Some of the data augmentation techniques are rotation, flipping, blurring, random cropping, shifting, zooming.  
+- There are multiple types of augmentations possible. The basic ones transform the original image using one of the following types of transformations:
+	Linear transformations
+	Affine transformations
+
+
+
+
+
+
+
+
+
+ 
+
+
+
+
+
+-
